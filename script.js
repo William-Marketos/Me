@@ -1,15 +1,16 @@
 /* ═══════════════════════════════════════════════════
-   JOHN MACKLEMORE — script.js
-   Western / Desert Theme
+   WILLIAM MARKETOS — script.js
+   Western / Monument Valley Theme
    Features:
      - Custom cursor tracking
      - Scroll reveal (IntersectionObserver)
      - Navbar scroll behaviour + mobile toggle
      - 3D tilt cards
-     - Dust mote particle system (hero)
+     - Dust mote particle system (hero) — LARGE & DRAMATIC
      - Night sky stars (footer)
      - Stat counter animation
-     - Soundboard (Web Audio API) — 12 cowboy sounds
+     - Soundboard — plays MP3s from Sounds/ folder
+     - Gunshot on click (suppressed during soundboard use)
      - Keyboard shortcuts (Q W E R / A S D F / Z X C V)
      - Animated visualizer bars
      - Smooth anchor navigation
@@ -20,13 +21,17 @@
 'use strict';
 
 /* ─────────────────────────────────────────
-   1. CUSTOM CURSOR
+   1. CUSTOM CURSOR + GUNSHOT ON CLICK
+      (suppressed while soundboard buttons are active)
 ───────────────────────────────────────── */
 const cursorDot  = document.getElementById('cursor');
 const cursorRing = document.getElementById('cursorRing');
 
 let mouseX = 0, mouseY = 0;
 let ringX  = 0, ringY  = 0;
+
+// Flag — true while a soundboard pad is being pressed
+let soundboardActive = false;
 
 document.addEventListener('mousemove', e => {
   mouseX = e.clientX;
@@ -35,9 +40,38 @@ document.addEventListener('mousemove', e => {
   cursorDot.style.top  = mouseY + 'px';
 });
 
+// Gunshot — fires on every general click, EXCEPT soundboard pads
+const gunshotEl = document.getElementById('gunshot');
 document.addEventListener('click', () => {
-  const shot = new Audio('gunshot.mp3');
-  shot.play();
+  if (soundboardActive) return;
+  if (gunshotEl) {
+    gunshotEl.currentTime = 0;
+    gunshotEl.play().catch(() => {});
+  }
+});
+
+/* ─────────────────────────────────────────
+   AUDIO CONTEXT (shared across the page)
+───────────────────────────────────────── */
+let audioCtx = null;
+
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function masterOut(ctx, vol = 0.7) {
+  const g = ctx.createGain();
+  g.gain.value = Math.min(1, vol);
+  g.connect(ctx.destination);
+  return g;
+}
+
+// Pre-load all soundboard MP3s once DOM is ready
+window.addEventListener('DOMContentLoaded', async () => {
+  const ctx = getCtx();
+  await loadAllSounds(ctx);
 });
 
 function animateRing() {
@@ -133,21 +167,39 @@ document.querySelectorAll('.stat-num').forEach(el => statObs.observe(el));
 
 /* ─────────────────────────────────────────
    6. DUST MOTES PARTICLE SYSTEM (HERO)
+      Large, dramatic Monument Valley dust
 ───────────────────────────────────────── */
 function initDustMotes() {
   const container = document.getElementById('dustMotes');
   if (!container) return;
   container.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:3;overflow:hidden;';
 
-  const count = 38;
+  const count = 55;
   for (let i = 0; i < count; i++) {
     const mote  = document.createElement('div');
-    const size  = Math.random() * 3.5 + 1;
-    const x     = Math.random() * 100;
+
+    // Mix of small sparks and large drifting dust clouds
+    const isBig  = Math.random() > 0.55;
+    const size   = isBig
+      ? Math.random() * 22 + 10    // large: 10–32px
+      : Math.random() * 7  + 3;    // small: 3–10px
+    const x      = Math.random() * 110 - 5;  // allow slight off-screen
     const startY = Math.random() * 100;
-    const dur   = Math.random() * 20 + 15;
-    const delay = Math.random() * -25;
-    const drift = (Math.random() - 0.5) * 60;
+    const dur    = Math.random() * 22 + 14;
+    const delay  = Math.random() * -30;
+    const drift  = (Math.random() - 0.5) * 120;
+
+    // Colour palette: warm golds, oranges, and dusty whites
+    const palettes = [
+      `rgba(${220 + (Math.random()*20|0)}, ${140 + (Math.random()*40|0)}, ${30 + (Math.random()*20|0)},`,   // gold-orange
+      `rgba(${200 + (Math.random()*30|0)}, ${100 + (Math.random()*30|0)}, ${20 + (Math.random()*20|0)},`,   // burnt orange
+      `rgba(${240 + (Math.random()*15|0)}, ${200 + (Math.random()*30|0)}, ${120 + (Math.random()*30|0)},`,  // pale gold
+      `rgba(${180 + (Math.random()*30|0)}, ${80  + (Math.random()*30|0)}, ${10 + (Math.random()*15|0)},`,   // deep rust
+    ];
+    const col = palettes[Math.floor(Math.random() * palettes.length)];
+    const alpha = isBig
+      ? (Math.random() * 0.25 + 0.08)   // large: softer
+      : (Math.random() * 0.55 + 0.25);  // small: punchier
 
     mote.style.cssText = `
       position: absolute;
@@ -156,7 +208,8 @@ function initDustMotes() {
       width: ${size}px;
       height: ${size}px;
       border-radius: 50%;
-      background: rgba(${212 + Math.random()*20 | 0}, ${150 + Math.random()*30 | 0}, ${40 + Math.random()*20 | 0}, ${Math.random() * 0.5 + 0.15});
+      background: ${col}${alpha});
+      ${isBig ? `filter: blur(${Math.random()*4+2}px);` : ''}
       animation: moteFloat ${dur}s ${delay}s ease-in-out infinite;
       --drift: ${drift}px;
     `;
@@ -170,10 +223,10 @@ function initDustMotes() {
     s.textContent = `
       @keyframes moteFloat {
         0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-        10%  { opacity: 1; }
-        50%  { transform: translateY(-38vh) translateX(var(--drift)) scale(1.3); }
-        90%  { opacity: 0.6; }
-        100% { transform: translateY(-80vh) translateX(calc(var(--drift)*1.5)) scale(0.7); opacity: 0; }
+        8%   { opacity: 1; }
+        45%  { transform: translateY(-35vh) translateX(var(--drift)) scale(1.4); }
+        88%  { opacity: 0.5; }
+        100% { transform: translateY(-85vh) translateX(calc(var(--drift)*1.6)) scale(0.5); opacity: 0; }
       }
     `;
     document.head.appendChild(s);
@@ -287,271 +340,57 @@ document.querySelectorAll('.track-item').forEach(item => {
 
 
 /* ─────────────────────────────────────────
-   11. SOUNDBOARD — WEB AUDIO API
-       All 12 cowboy sounds synthesised
-       with no external files
+   11. SOUNDBOARD — MP3 PLAYBACK
+       Each pad plays from Sounds/*.mp3
+       (place your own files there)
 ───────────────────────────────────────── */
-let audioCtx = null;
-
-function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
-}
-
-function masterOut(ctx, vol = 0.7) {
-  const g = ctx.createGain();
-  g.gain.value = vol;
-  g.connect(ctx.destination);
-  return g;
-}
-
-function distCurve(amt) {
-  const n = 256, c = new Float32Array(n);
-  for (let i = 0; i < n; i++) {
-    const x = (i * 2) / n - 1;
-    c[i] = ((Math.PI + amt) * x) / (Math.PI + amt * Math.abs(x));
-  }
-  return c;
-}
-
-/* ── 12 Sound definitions ── */
-const sounds = {
-
-  // BOOT STOMP (kick)
-  kick(ctx) {
-    const out = masterOut(ctx);
-    const osc = ctx.createOscillator(), env = ctx.createGain();
-    const t = ctx.currentTime;
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(200, t);
-    osc.frequency.exponentialRampToValueAtTime(35, t + 0.35);
-    env.gain.setValueAtTime(1.1, t);
-    env.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
-    osc.connect(env); env.connect(out);
-    osc.start(t); osc.stop(t + 0.5);
-  },
-
-  // WHIP CRACK (snare)
-  snare(ctx) {
-    const out = masterOut(ctx);
-    const t = ctx.currentTime;
-    const len = ctx.sampleRate * 0.18;
-    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
-    const ns = ctx.createBufferSource(); ns.buffer = buf;
-    const nEnv = ctx.createGain(), filt = ctx.createBiquadFilter();
-    filt.type = 'bandpass'; filt.frequency.value = 2200; filt.Q.value = 0.7;
-    nEnv.gain.setValueAtTime(1.2, t);
-    nEnv.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
-    ns.connect(filt); filt.connect(nEnv); nEnv.connect(out);
-    ns.start(t); ns.stop(t + 0.22);
-    // crack transient
-    const osc = ctx.createOscillator(), oEnv = ctx.createGain();
-    osc.type = 'triangle'; osc.frequency.value = 240;
-    oEnv.gain.setValueAtTime(0.6, t); oEnv.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-    osc.connect(oEnv); oEnv.connect(out); osc.start(t); osc.stop(t + 0.08);
-  },
-
-  // SPUR JINGLE (hi-hat)
-  hihat(ctx) {
-    const out = masterOut(ctx, 0.55);
-    const t = ctx.currentTime;
-    // Two pitched osc mix = metallic spur rattle
-    [3200, 4800, 7200].forEach(freq => {
-      const osc = ctx.createOscillator(), env = ctx.createGain();
-      osc.type = 'square'; osc.frequency.value = freq;
-      env.gain.setValueAtTime(0.15, t);
-      env.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-      const filt = ctx.createBiquadFilter(); filt.type = 'highpass'; filt.frequency.value = 5000;
-      osc.connect(filt); filt.connect(env); env.connect(out);
-      osc.start(t); osc.stop(t + 0.08);
-    });
-  },
-
-  // RODEO CLAP (clap)
-  clap(ctx) {
-    const out = masterOut(ctx);
-    const t = ctx.currentTime;
-    [0, 0.012, 0.025].forEach(delay => {
-      const len = Math.floor(ctx.sampleRate * 0.045);
-      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-      const d = buf.getChannelData(0);
-      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-      const ns = ctx.createBufferSource(); ns.buffer = buf;
-      const env = ctx.createGain(), filt = ctx.createBiquadFilter();
-      filt.type = 'bandpass'; filt.frequency.value = 1100; filt.Q.value = 0.6;
-      env.gain.setValueAtTime(0.9, t + delay);
-      env.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.1);
-      ns.connect(filt); filt.connect(env); env.connect(out);
-      ns.start(t + delay); ns.stop(t + delay + 0.12);
-    });
-  },
-
-  // TUMBLEWEED BASS (bass drop)
-  bass(ctx) {
-    const out = masterOut(ctx);
-    const osc = ctx.createOscillator(), env = ctx.createGain(), dist = ctx.createWaveShaper();
-    dist.curve = distCurve(60);
-    osc.type = 'sawtooth';
-    const t = ctx.currentTime;
-    osc.frequency.setValueAtTime(65, t);
-    osc.frequency.exponentialRampToValueAtTime(28, t + 0.55);
-    env.gain.setValueAtTime(1.1, t);
-    env.gain.exponentialRampToValueAtTime(0.001, t + 0.65);
-    osc.connect(dist); dist.connect(env); env.connect(out);
-    osc.start(t); osc.stop(t + 0.7);
-  },
-
-  // SALOON PIANO (honky-tonk chord)
-  synth(ctx) {
-    const out = masterOut(ctx, 0.5);
-    const t = ctx.currentTime;
-    // Major chord: C4-E4-G4 with slight detuning for saloon effect
-    const notes = [261.6, 329.6, 392.0, 523.2];
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator(), env = ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.value = freq + (Math.random() - 0.5) * 3; // slight detune
-      env.gain.setValueAtTime(0.35, t);
-      env.gain.setValueAtTime(0.35, t + 0.05);
-      env.gain.exponentialRampToValueAtTime(0.001, t + 0.9 + i * 0.06);
-      osc.connect(env); env.connect(out);
-      osc.start(t); osc.stop(t + 1.1);
-    });
-  },
-
-  // LASSO SWING (laser sweep)
-  laser(ctx) {
-    const out = masterOut(ctx);
-    const osc = ctx.createOscillator(), env = ctx.createGain();
-    osc.type = 'sawtooth';
-    const t = ctx.currentTime;
-    // Circular sweep like a lasso
-    osc.frequency.setValueAtTime(400, t);
-    osc.frequency.linearRampToValueAtTime(900, t + 0.15);
-    osc.frequency.linearRampToValueAtTime(400, t + 0.3);
-    osc.frequency.linearRampToValueAtTime(900, t + 0.45);
-    env.gain.setValueAtTime(0.7, t);
-    env.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
-    osc.connect(env); env.connect(out);
-    osc.start(t); osc.stop(t + 0.6);
-  },
-
-  // CATTLE CALL (air horn — big chord)
-  airhorn(ctx) {
-    const out = masterOut(ctx, 0.45);
-    const t = ctx.currentTime;
-    // Mooing intervals
-    [220, 277, 330, 440].forEach(freq => {
-      const osc = ctx.createOscillator(), env = ctx.createGain(), dist = ctx.createWaveShaper();
-      dist.curve = distCurve(35);
-      osc.type = 'sawtooth'; osc.frequency.value = freq;
-      env.gain.setValueAtTime(0, t);
-      env.gain.linearRampToValueAtTime(0.45, t + 0.07);
-      env.gain.setValueAtTime(0.45, t + 0.5);
-      env.gain.exponentialRampToValueAtTime(0.001, t + 0.85);
-      osc.connect(dist); dist.connect(env); env.connect(out);
-      osc.start(t); osc.stop(t + 0.9);
-    });
-  },
-
-  // SADDLE SCRATCH (vinyl scratch)
-  vinyl(ctx) {
-    const out = masterOut(ctx);
-    const t = ctx.currentTime;
-    const dur = 0.5;
-    const len = Math.floor(ctx.sampleRate * dur);
-    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-    const d   = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) {
-      const mod = Math.sin(i / len * Math.PI * 8) * (1 - i / len * 0.5);
-      d[i] = (Math.random() * 2 - 1) * Math.abs(mod);
-    }
-    const ns = ctx.createBufferSource(); ns.buffer = buf;
-    const filt = ctx.createBiquadFilter();
-    filt.type = 'peaking'; filt.frequency.value = 2500; filt.gain.value = 10;
-    const env = ctx.createGain();
-    env.gain.setValueAtTime(0.7, t);
-    env.gain.linearRampToValueAtTime(0.001, t + dur);
-    ns.connect(filt); filt.connect(env); env.connect(out);
-    ns.start(t); ns.stop(t + dur + 0.05);
-  },
-
-  // DESERT WIND (woosh)
-  woosh(ctx) {
-    const out = masterOut(ctx, 0.6);
-    const t = ctx.currentTime;
-    const len = Math.floor(ctx.sampleRate * 0.6);
-    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-    const d   = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-    const ns = ctx.createBufferSource(); ns.buffer = buf;
-    const filt = ctx.createBiquadFilter();
-    filt.type = 'bandpass';
-    filt.frequency.setValueAtTime(180, t);
-    filt.frequency.exponentialRampToValueAtTime(3000, t + 0.35);
-    filt.frequency.exponentialRampToValueAtTime(500, t + 0.6);
-    filt.Q.value = 0.5;
-    const env = ctx.createGain();
-    env.gain.setValueAtTime(0, t);
-    env.gain.linearRampToValueAtTime(1, t + 0.12);
-    env.gain.exponentialRampToValueAtTime(0.001, t + 0.65);
-    ns.connect(filt); filt.connect(env); env.connect(out);
-    ns.start(t); ns.stop(t + 0.7);
-  },
-
-  // CHURCH BELLS (chime sequence)
-  chime(ctx) {
-    const out = masterOut(ctx, 0.6);
-    const t = ctx.currentTime;
-    // Church bell partial series
-    const partials = [
-      { f: 523.25, a: 0.5 },  // C5
-      { f: 659.25, a: 0.4 },  // E5
-      { f: 783.99, a: 0.35 }, // G5
-      { f: 1046.5, a: 0.3 },  // C6
-    ];
-    partials.forEach(({ f, a }, i) => {
-      const osc = ctx.createOscillator(), env = ctx.createGain();
-      osc.type = 'sine'; osc.frequency.value = f;
-      const st = t + i * 0.1;
-      env.gain.setValueAtTime(0, st);
-      env.gain.linearRampToValueAtTime(a, st + 0.008);
-      env.gain.exponentialRampToValueAtTime(0.001, st + 1.6);
-      osc.connect(env); env.connect(out);
-      osc.start(st); osc.stop(st + 1.7);
-    });
-  },
-
-  // THUNDER ROLL (boom)
-  boom(ctx) {
-    const out = masterOut(ctx);
-    const t = ctx.currentTime;
-    // Sub oscillator
-    const sub = ctx.createOscillator(), subEnv = ctx.createGain();
-    sub.type = 'sine';
-    sub.frequency.setValueAtTime(85, t);
-    sub.frequency.exponentialRampToValueAtTime(22, t + 0.9);
-    subEnv.gain.setValueAtTime(1.3, t);
-    subEnv.gain.exponentialRampToValueAtTime(0.001, t + 1.1);
-    sub.connect(subEnv); subEnv.connect(out);
-    sub.start(t); sub.stop(t + 1.2);
-    // Rumble noise burst
-    const len = Math.floor(ctx.sampleRate * 0.5);
-    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-    const d   = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-    const ns = ctx.createBufferSource(); ns.buffer = buf;
-    const filt = ctx.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 320;
-    const nEnv = ctx.createGain();
-    nEnv.gain.setValueAtTime(0.55, t);
-    nEnv.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
-    ns.connect(filt); filt.connect(nEnv); nEnv.connect(out);
-    ns.start(t); ns.stop(t + 0.55);
-  }
+// ─── SOUND FILE MAP ───
+const soundFiles = {
+  kick:    'Sounds/kick.mp3',
+  snare:   'Sounds/snare.mp3',
+  hihat:   'Sounds/hihat.mp3',
+  clap:    'Sounds/clap.mp3',
+  bass:    'Sounds/bass.mp3',
+  synth:   'Sounds/synth.mp3',
+  laser:   'Sounds/laser.mp3',
+  airhorn: 'Sounds/airhorn.mp3',
+  vinyl:   'Sounds/vinyl.mp3',
+  woosh:   'Sounds/woosh.mp3',
+  chime:   'Sounds/chime.mp3',
+  boom:    'Sounds/boom.mp3'
 };
+
+const audioBuffers = {};
+
+async function loadAllSounds(ctx) {
+  for (const [name, url] of Object.entries(soundFiles)) {
+    try {
+      const response    = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const arrayBuffer = await response.arrayBuffer();
+      audioBuffers[name] = await ctx.decodeAudioData(arrayBuffer);
+    } catch (err) {
+      // File not yet added — pad will silently skip
+      console.warn(`Sound "${name}" not loaded (${err.message}). Add ${url} to enable.`);
+    }
+  }
+}
+
+// ─── PLAY A BUFFER ───
+function playBuffer(name, volume = 0.85) {
+  const ctx = getCtx();
+  const buf = audioBuffers[name];
+  if (!buf) return; // file not loaded yet — no error shown to user
+
+  const source = ctx.createBufferSource();
+  source.buffer = buf;
+
+  const gain = ctx.createGain();
+  gain.gain.value = volume;
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(ctx.currentTime);
+}
 
 
 /* ─── Visualiser ─── */
@@ -592,8 +431,11 @@ function runViz(colour) {
 }
 
 function triggerSound(name, padEl) {
-  const ctx = getCtx();
-  if (sounds[name]) sounds[name](ctx);
+  // Suppress gunshot while pad is being triggered
+  soundboardActive = true;
+  setTimeout(() => { soundboardActive = false; }, 350);
+
+  playBuffer(name);
 
   if (padEl) {
     padEl.classList.add('active');
@@ -638,6 +480,7 @@ document.addEventListener('keydown', e => {
 
 /* ─────────────────────────────────────────
    12. DUST BURST on sound pad press
+       Large, dramatic explosion of particles
 ───────────────────────────────────────── */
 function spawnDustBurst(pad) {
   if (!pad) return;
@@ -645,28 +488,34 @@ function spawnDustBurst(pad) {
   const cx = rect.left + rect.width / 2;
   const cy = rect.top  + rect.height / 2;
 
-  for (let i = 0; i < 8; i++) {
-    const p = document.createElement('div');
-    const angle = (i / 8) * Math.PI * 2;
-    const dist  = Math.random() * 50 + 25;
-    const dx    = Math.cos(angle) * dist;
-    const dy    = Math.sin(angle) * dist;
-    const s     = Math.random() * 5 + 3;
+  // Spawn 16 particles: a mix of large blobs and small sparks
+  for (let i = 0; i < 16; i++) {
+    const p       = document.createElement('div');
+    const angle   = (i / 16) * Math.PI * 2 + (Math.random() - 0.5) * 0.6;
+    const dist    = Math.random() * 90 + 40;
+    const dx      = Math.cos(angle) * dist;
+    const dy      = Math.sin(angle) * dist;
+    const isBig   = i < 6;
+    const s       = isBig
+      ? Math.random() * 18 + 10    // big blobs: 10–28px
+      : Math.random() * 8  + 4;    // small sparks: 4–12px
+    const blur    = isBig ? `filter:blur(${Math.random()*3+1}px);` : '';
 
     p.style.cssText = `
       position: fixed;
       left: ${cx}px; top: ${cy}px;
       width: ${s}px; height: ${s}px;
       border-radius: 50%;
-      background: rgba(${193 + Math.random()*30 | 0}, ${120 + Math.random()*30 | 0}, ${20 + Math.random()*30 | 0}, 0.75);
+      background: rgba(${200 + (Math.random()*40|0)}, ${100 + (Math.random()*60|0)}, ${10 + (Math.random()*40|0)}, ${isBig ? 0.55 : 0.85});
       pointer-events: none;
       z-index: 9999;
       transform: translate(-50%, -50%);
-      animation: dustBurst 0.55s ease-out forwards;
+      animation: dustBurst ${isBig ? 0.75 : 0.5}s ease-out forwards;
+      ${blur}
       --dx: ${dx}px; --dy: ${dy}px;
     `;
     document.body.appendChild(p);
-    setTimeout(() => p.remove(), 600);
+    setTimeout(() => p.remove(), isBig ? 800 : 550);
   }
 }
 

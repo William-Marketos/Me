@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
-   JOHN MACKLEMORE — styles.css
-   Aesthetic: Desert Sunset Western — Parchment, Terracotta,
-              Gold, Sage, Saddle Brown, Weathered Wood
+   WILLIAM MARKETOS — styles.css
+   Aesthetic: Monument Valley Desert — Terracotta Buttes,
+              Burnt Orange Sky, Aged Parchment, Saddle Leather
    ═══════════════════════════════════════════════════════════ */
 
 /* ─── CSS VARIABLES ─── */
@@ -92,9 +92,9 @@ body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--go
   position: fixed; inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.045;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
 }
 
 /* ─── SCROLL REVEAL ─── */
@@ -172,7 +172,17 @@ body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--go
 
 /* ─── SECTION SHARED ─── */
 .section { position: relative; padding: 7rem 0; }
-.section-alt { background: var(--parchment); }
+.section-alt {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(107,59,42,0.025) 2px,
+      rgba(107,59,42,0.025) 4px
+    ),
+    var(--parchment);
+}
 .section-inner { max-width: 1180px; margin: 0 auto; padding: 0 2rem; }
 
 .section-tag {
@@ -230,12 +240,20 @@ body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--go
   z-index: 1000;
   display: flex; align-items: center; justify-content: space-between;
   padding: 1rem 2.5rem;
-  background: rgba(61, 34, 20, 0.88);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,0.02) 3px,
+      rgba(255,255,255,0.02) 6px
+    ),
+    rgba(44, 22, 10, 0.92);
   backdrop-filter: blur(16px);
-  border-bottom: 2px solid rgba(212,150,26,0.3);
+  border-bottom: 2px solid rgba(212,150,26,0.35);
   transition: var(--transition);
 }
-#navbar.scrolled { padding: 0.7rem 2.5rem; background: rgba(44, 26, 16, 0.97); }
+#navbar.scrolled { padding: 0.7rem 2.5rem; background: rgba(30, 12, 5, 0.98); }
 
 .nav-logo {
   display: flex; align-items: center; gap: 0.4rem;
@@ -289,24 +307,24 @@ body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--go
   position: absolute; inset: 0;
   background: linear-gradient(
     180deg,
-    #1a2a3a 0%,
-    #2a3f5f 8%,
-    #5a6f8a 18%,
-    #8B9EB8 25%,
-    #B8A898 35%,
-    #D4956A 48%,
-    #C86035 58%,
-    #A03010 68%,
-    #7A2510 75%,
-    #4A1A0A 85%,
-    #2C1008 100%
+    #1C0A3A 0%,
+    #3A1860 7%,
+    #6B2850 16%,
+    #9C3828 28%,
+    #C85C2A 40%,
+    #D97E20 52%,
+    #C25515 62%,
+    #8B2C0A 73%,
+    #4A1205 84%,
+    #200802 100%
   );
 }
 .sky-bands {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 80% 30% at 50% 40%, rgba(232,184,75,0.25) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 20% at 50% 48%, rgba(196,129,58,0.3) 0%, transparent 60%);
+    radial-gradient(ellipse 90% 35% at 50% 50%, rgba(220,160,40,0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 25% at 50% 55%, rgba(180,80,20,0.35) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 15% at 50% 60%, rgba(255,200,60,0.15) 0%, transparent 60%);
   animation: skyBreath 8s ease-in-out infinite alternate;
 }
 @keyframes skyBreath {
@@ -317,30 +335,30 @@ body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--go
 /* Sun */
 .sun-container {
   position: absolute;
-  left: 50%; bottom: 26%;
+  left: 50%; bottom: 30%;
   transform: translateX(-50%);
   z-index: 2;
   pointer-events: none;
 }
 .sun-glow {
   position: absolute;
-  width: 280px; height: 280px;
+  width: 420px; height: 420px;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(232,184,75,0.35) 0%, rgba(212,150,26,0.15) 40%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(255,200,60,0.4) 0%, rgba(220,120,20,0.2) 40%, transparent 70%);
   animation: sunPulse 4s ease-in-out infinite alternate;
 }
 @keyframes sunPulse {
   0%   { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
-  100% { transform: translate(-50%,-50%) scale(1.12); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
 }
 .sun-disc {
   position: relative;
-  width: 88px; height: 88px;
+  width: 110px; height: 110px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #FFF3C8, #F5C842 40%, #D4961A 70%, #C47A10 100%);
-  box-shadow: 0 0 40px rgba(232,184,75,0.8), 0 0 80px rgba(212,150,26,0.5), 0 0 140px rgba(193,68,14,0.25);
+  background: radial-gradient(circle at 40% 35%, #FFF8D0, #FFD04A 35%, #E08A10 70%, #C06008 100%);
+  box-shadow: 0 0 60px rgba(255,200,60,0.9), 0 0 120px rgba(220,130,20,0.6), 0 0 200px rgba(180,60,10,0.3);
   animation: sunFloat 6s ease-in-out infinite;
 }
 @keyframes sunFloat {
@@ -443,51 +461,51 @@ body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--go
 
 .hero-name {
   font-family: var(--font-display);
-  font-size: clamp(4.5rem, 14vw, 12rem);
-  line-height: 0.88;
+  font-size: clamp(3.5rem, 11vw, 9rem);
+  line-height: 0.9;
   letter-spacing: 2px;
   display: block;
 }
 .hn-john {
   display: block;
-  color: var(--cream);
-  text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  color: rgba(253,246,227,0.55);
+  text-shadow: 0 2px 18px rgba(0,0,0,0.4), 0 0 60px rgba(180,80,10,0.2);
 }
 .hn-mack {
-  color: var(--gold);
-  text-shadow: 0 0 40px rgba(212,150,26,0.6), 0 4px 20px rgba(0,0,0,0.4);
+  color: rgba(212,150,26,0.65);
+  text-shadow: 0 0 30px rgba(212,150,26,0.4), 0 2px 14px rgba(0,0,0,0.35);
 }
 .hn-more {
-  color: var(--gold-light);
+  color: rgba(232,184,75,0.60);
   animation: nameGlow 3s ease-in-out infinite alternate;
-  text-shadow: 0 0 60px rgba(232,184,75,0.5);
+  text-shadow: 0 0 40px rgba(232,184,75,0.35);
 }
 @keyframes nameGlow {
-  from { text-shadow: 0 0 30px rgba(232,184,75,0.4); }
-  to   { text-shadow: 0 0 80px rgba(232,184,75,0.8), 0 0 120px rgba(212,150,26,0.4); }
+  from { text-shadow: 0 0 20px rgba(232,184,75,0.25); }
+  to   { text-shadow: 0 0 60px rgba(232,184,75,0.55), 0 0 90px rgba(212,150,26,0.25); }
 }
 .hero-quote {
   font-size: 1.05rem;
-  color: rgba(253,246,227,0.65);
+  color: rgba(253,246,227,0.5);
   font-style: italic;
   margin: 1.5rem 0 2.5rem;
   letter-spacing: 1px;
 }
 .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
-/* Mountain scene */
+/* Mountain / butte scene */
 .mountain-scene {
   position: absolute; bottom: 0; left: 0; right: 0;
   z-index: 4; pointer-events: none;
 }
 .mtns { position: absolute; bottom: 0; left: 0; width: 100%; }
-.mtns-far  { height: 200px; }
-.mtns-mid  { height: 190px; }
-.mtns-near { height: 180px; }
-.ground-band { position: absolute; bottom: 0; left: 0; width: 100%; height: 22px; }
+.mtns-far  { height: 260px; }
+.mtns-mid  { height: 260px; }
+.mtns-near { height: 240px; }
+.ground-band { position: absolute; bottom: 0; left: 0; width: 100%; height: 24px; }
 
 .cactus {
-  position: absolute; bottom: 18px;
+  position: absolute; bottom: 22px;
   pointer-events: none;
 }
 .cactus-l  { left:  8%; width: 90px; height: 175px; }
@@ -964,8 +982,23 @@ body:has(button:hover) .cursor { width: 18px; height: 18px; background: var(--go
    SOUNDBOARD — SALOON
 ════════════════════════════════════════ */
 .section-saloon {
-  background: radial-gradient(ellipse at 50% 80%, rgba(139,90,43,0.12) 0%, transparent 60%),
-              var(--cream);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      rgba(107,59,42,0.03) 8px,
+      rgba(107,59,42,0.03) 16px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 4px,
+      rgba(107,59,42,0.015) 4px,
+      rgba(107,59,42,0.015) 8px
+    ),
+    radial-gradient(ellipse at 50% 80%, rgba(139,90,43,0.14) 0%, transparent 60%),
+    var(--cream);
 }
 .soundboard-sub {
   font-family: var(--font-stamp);

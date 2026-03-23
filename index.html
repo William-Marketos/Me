@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>John Macklemore — Dust, Gold &amp; Good Times</title>
+  <title>William Marketos — Dust, Gold &amp; Good Times</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,21 +15,8 @@
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- Gunshot Sound when clicking -->
+  <!-- Gunshot Sound — controlled via script.js -->
   <audio id="gunshot" src="WillaimSux/Sounds/freesound_community-m1-garand-rifle-80192.mp3" preload="auto"></audio>
-
-  <script>
-    const gunshot = document.getElementById('gunshot');
-
-    document.addEventListener('click', () => {
-      // Restart sound if already playing
-      gunshot.currentTime = 0;
-      gunshot.play().catch(() => {
-        // Some browsers block autoplay until user interaction;
-        // click already counts, so this usually won't fire.
-      });
-    });
-  </script>
 
   <!-- Grain overlay for parchment texture -->
   <div class="grain-overlay" aria-hidden="true"></div>
@@ -130,23 +117,76 @@
       </div>
     </div>
 
-    <!-- Mountain silhouette SVG -->
+    <!-- Monument Valley silhouette scene -->
     <div class="mountain-scene" aria-hidden="true">
-      <!-- Far mountains -->
-      <svg class="mtns mtns-far" viewBox="0 0 1440 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="0,240 0,155 110,65 230,140 350,55 470,130 570,80 670,145 740,35 820,115 920,58 1030,135 1130,45 1250,125 1360,75 1440,130 1440,240" fill="#A0652A" opacity="0.3"/>
+
+      <!-- Far mesas — hazy blue-purple, very distant -->
+      <svg class="mtns mtns-far" viewBox="0 0 1440 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Left distant table mesa -->
+        <polygon points="0,260 0,175 35,175 35,158 160,158 160,175 200,175 200,260" fill="#7B4A9B" opacity="0.22"/>
+        <!-- Small distant pinnacle -->
+        <polygon points="310,260 310,165 330,150 360,150 380,165 380,260" fill="#7B4A9B" opacity="0.18"/>
+        <!-- Center distant mesa -->
+        <polygon points="620,260 620,148 655,148 655,132 760,132 760,148 795,148 795,260" fill="#7B4A9B" opacity="0.2"/>
+        <!-- Right distant butte -->
+        <polygon points="1080,260 1080,158 1108,158 1108,140 1240,140 1240,158 1280,158 1280,260" fill="#7B4A9B" opacity="0.2"/>
+        <!-- Far right sliver -->
+        <polygon points="1360,260 1360,170 1385,170 1385,160 1440,160 1440,260" fill="#7B4A9B" opacity="0.15"/>
       </svg>
-      <!-- Mid mountains -->
-      <svg class="mtns mtns-mid" viewBox="0 0 1440 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="0,240 0,175 80,105 185,162 290,95 415,165 510,105 612,160 690,82 785,155 890,112 990,168 1095,98 1200,158 1310,108 1440,162 1440,240" fill="#7A4E2D" opacity="0.55"/>
+
+      <!-- Mid layer — the iconic Mittens + Merrick Butte -->
+      <svg class="mtns mtns-mid" viewBox="0 0 1440 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- West Mitten: main column left, thumb jutting right -->
+        <polygon points="
+          285,260  285,72  295,62  340,60  380,62  385,72
+          385,118  440,118  448,112  465,112  470,118
+          470,260
+        " fill="#8B2C0A" opacity="0.72"/>
+        <!-- West Mitten thumb raised tip -->
+        <polygon points="438,118 438,95 448,88 458,88 468,95 468,118" fill="#8B2C0A" opacity="0.72"/>
+
+        <!-- East Mitten: thumb jutting left, main column right -->
+        <polygon points="
+          520,260  520,118  527,112  546,112  554,118
+          554,68   562,58   606,56   648,58   656,68
+          656,260
+        " fill="#9B3412" opacity="0.72"/>
+        <!-- East Mitten thumb raised tip -->
+        <polygon points="520,118 520,92 527,85 537,85 547,92 547,118" fill="#9B3412" opacity="0.72"/>
+
+        <!-- Merrick Butte (wide rectangular mesa, right of center) -->
+        <polygon points="830,260 830,88 842,78 980,78 992,88 992,260" fill="#7A2208" opacity="0.68"/>
+        <!-- Merrick subtle step on left shoulder -->
+        <polygon points="830,138 830,115 845,108 870,108 870,138" fill="#7A2208" opacity="0.68"/>
+
+        <!-- Small pinnacle far left -->
+        <polygon points="80,260 80,170 92,158 118,158 130,170 130,260" fill="#6B1E06" opacity="0.55"/>
+
+        <!-- Low wide mesa far right -->
+        <polygon points="1150,260 1150,148 1162,138 1340,138 1352,148 1352,260" fill="#7A2208" opacity="0.6"/>
       </svg>
-      <!-- Foreground hills -->
-      <svg class="mtns mtns-near" viewBox="0 0 1440 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,240 Q90,185 190,200 Q310,215 420,188 Q540,160 660,182 Q780,200 900,175 Q1020,150 1140,180 Q1260,205 1360,188 Q1400,182 1440,190 L1440,240 Z" fill="#5D3018" opacity="0.8"/>
+
+      <!-- Foreground desert shelf — dark jagged near-ground layer -->
+      <svg class="mtns mtns-near" viewBox="0 0 1440 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="
+          M0,260 L0,208
+          L60,202 L60,192 L120,192 L120,202
+          L200,210 L280,205
+          L280,190 L340,190 L340,205
+          L440,212 L560,204
+          L560,188 L620,188 L620,204
+          L720,212 L840,206
+          L840,192 L910,192 L910,206
+          L1020,212 L1130,204
+          L1130,190 L1190,190 L1190,204
+          L1300,210 L1380,206 L1440,208
+          L1440,260 Z
+        " fill="#4A1605" opacity="0.88"/>
       </svg>
+
       <!-- Ground band -->
       <svg class="ground-band" viewBox="0 0 1440 30" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="1440" height="30" fill="#3D2214"/>
+        <rect width="1440" height="30" fill="#2E0E04"/>
       </svg>
 
       <!-- Left cactus -->
@@ -218,12 +258,12 @@
   <section id="about" class="section">
     <div class="section-inner">
       <div class="section-tag reveal">~ 01 ~ About Me ~</div>
-      <h2 class="section-title reveal">Who Is <span class="hl-gold">John?</span></h2>
+      <h2 class="section-title reveal">Who Is <span class="hl-gold">William?</span></h2>
 
       <div class="about-grid">
         <div class="about-text reveal">
           <p class="big-p">
-            Howdy — I'm <strong>John Macklemore</strong>, and I live life like a long open road:
+            Howdy — I'm <strong>William Marketos</strong>, and I live life like a long open road:
             full throttle, eyes wide open, wind in my face.
           </p>
           <p>
@@ -661,7 +701,7 @@
 
       <div class="saloon-sign reveal">
         <div class="ss-inner">
-          <span>★</span>&nbsp; MACK'S SOUND SALOON &nbsp;<span>★</span>
+          <span>★</span>&nbsp; MARK'S SOUND SALOON &nbsp;<span>★</span>
         </div>
         <div class="ss-hooks">
           <div class="ss-hook"></div><div class="ss-hook"></div>
@@ -806,14 +846,14 @@
     </div>
 
     <div class="footer-ribbon">
-      <span>✦ JOHN MACKLEMORE ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦ JOHN MACKLEMORE ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦ JOHN MACKLEMORE ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦</span>
+      <span>✦ WILLIAM MARKETOS ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦ WILLIAM MARKETOS ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦ WILLIAM MARKETOS ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦</span>
     </div>
 
     <div class="footer-inner">
-      <div class="footer-logo">★ JM ★</div>
+      <div class="footer-logo">★ WM ★</div>
       <p class="footer-text">
         Made with grit, heart &amp; a whole lot of good vibes.<br/>
-        © <span id="year"></span> John Macklemore. All rights reserved.
+        © <span id="year"></span> William Marketos. All rights reserved.
       </p>
       <div class="footer-socials">
         <a href="#" class="social-btn">📸 Instagram</a>
