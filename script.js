@@ -33,7 +33,7 @@ window.gunshotEnabled = true;
 })();
 
 
-// ─── GUNSHOT SOUND ON CLICK ──────────────────────────────────
+// ─── GUNSHOT SOUND ON CLICK ────────────────────────────────── //
 const gunshotAudio = document.getElementById('gunshot');
 const muzzleFlash  = document.getElementById('muzzle-flash');
 
