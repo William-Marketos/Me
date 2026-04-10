@@ -3,870 +3,565 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>William Marketos — Dust, Gold &amp; Good Times</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>William Marketos — The Desert Legend</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Rye&family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Special+Elite&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rye&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,600;1,400&family=Special+Elite&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Custom Cursor -->
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
+  <!-- ── AUDIO ─────────────────────────────────────────────── -->
+  <audio id="gunshot" src="sounds/gunshot.mp3" preload="auto"></audio>
 
-  <!-- Gunshot Sound — controlled via script.js -->
-  <audio id="gunshot" src="WillaimSux/Sounds/freesound_community-m1-garand-rifle-80192.mp3" preload="auto"></audio>
+  <!-- ── BIRD OF PARADISE ──────────────────────────────────── -->
+  <!-- Uses PNG images: Bird_Right.png (left→right), Bird_Left.png (right→left), Bird_Dead.png (shot) -->
+  <div id="bird" class="bird" aria-hidden="true">
+    <img id="bird-img" src="images/Bird_Right.png" alt="Bird of Paradise" draggable="false" />
+  </div>
 
-  <!-- Grain overlay for parchment texture -->
-  <div class="grain-overlay" aria-hidden="true"></div>
+  <!-- ── CURSOR DUST PARTICLE ───────────────────────────────── -->
+  <div id="muzzle-flash" class="muzzle-flash"></div>
 
-  <!-- ═══════════════════════════════════════
-       NAVIGATION
-  ═══════════════════════════════════════ -->
-  <nav id="navbar">
-    <div class="nav-logo">
-      <span class="sheriff-star">★</span>
-      <span class="logo-text">W✢S✢M</span>
-      <span class="sheriff-star">★</span>
+  <!-- ── HERO SECTION ───────────────────────────────────────── -->
+  <section id="hero">
+    <canvas id="starfield"></canvas>
+
+    <!-- Desert Sand Dunes silhouette (foreground) -->
+    <div class="mountain-wrap" aria-hidden="true">
+      <svg class="mountains" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="duneGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#1a0e0600"/>
+            <stop offset="55%"  stop-color="#1a0e0660"/>
+            <stop offset="100%" stop-color="#0a070480"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Distant haze / horizon line -->
+        <path d="M0 200 Q180 180 360 190 Q540 170 720 185 Q900 160 1080 180 Q1260 150 1440 170 L1440 320 L0 320Z"
+              fill="#16100650"/>
+
+        <!-- Far background dunes – low, gentle profile -->
+        <path d="M0 210 Q130 170 300 195 Q470 160 640 190 Q810 140 980 180 Q1150 130 1320 175 Q1400 140 1440 170 L1440 320 L0 320Z"
+              fill="#18100670"/>
+
+        <!-- Mid-distance dunes – broader humps, left peak higher -->
+        <path d="M-60 320 Q80 140 220 160 Q380 120 580 180 Q740 150 900 130 Q1040 160 1240 200 Q1360 240 1480 270 L1480 320Z"
+              fill="#1a0e07cc"/>
+
+        <!-- Close dunes – massive left dune, smaller right dune -->
+        <path d="M-80 320 Q40 180 160 140 Q300 100 440 135 Q560 160 700 115 Q820 90 1000 160 Q1120 180 1300 280 Q1400 300 1520 310 L1520 320Z"
+              fill="#160c06"/>
+
+        <!-- Primary foreground dune – bold, dominant left peak -->
+        <path d="M-100 320 Q20 150 200 140 Q360 120 540 160 Q680 190 800 145 Q920 90 1120 200 Q1260 270 1420 305 Q1480 310 1560 315 L1560 320Z"
+              fill="#110a05"/>
+
+        <!-- Dune crest ripple – very near foreground -->
+        <path d="M-20 320 Q120 290 300 300 Q480 295 660 305 Q840 295 1020 308 Q1200 300 1380 312 Q1440 308 1480 314 L1480 320Z"
+              fill="#0d0904"/>
+
+        <!-- Ground base -->
+        <path d="M0 316 Q360 310 720 313 Q1080 310 1440 313 L1440 320 L0 320Z"
+              fill="#090701"/>
+
+        <!-- Atmospheric depth overlay -->
+        <rect x="0" y="258" width="1440" height="62" fill="url(#duneGrad)"/>
+      </svg>
     </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#about"         class="nav-link">About</a></li>
-      <li><a href="#school"        class="nav-link">School</a></li>
-      <li><a href="#hobbies"       class="nav-link">Hobbies</a></li>
-      <li><a href="#facts"         class="nav-link">Wanted</a></li>
-      <li><a href="#music-section" class="nav-link">Music</a></li>
-      <li><a href="#soundboard"    class="nav-link">Saloon</a></li>
-      <li><a href="#gallery"       class="nav-link">Gallery</a></li>
-    </ul>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
+
+    <!-- Hero text -->
+    <div class="hero-content">
+      <p class="hero-eyebrow">★ &nbsp; This is &nbsp; ★</p>
+      <h1 class="hero-title">William<br/>Marketos</h1>
+      <p class="hero-sub">Friend · Lover · Father</p>
+      <a href="#legend" class="scroll-cta">
+        <span>Let's dive in</span>
+        <svg viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4 L12 24 M5 17 L12 24 L19 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── NAVIGATION ─────────────────────────────────────────── -->
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <span class="nav-brand">⬡ W·M ⬡</span>
+      <ul class="nav-links">
+        <li><a href="#legend">The Legend</a></li>
+        <li><a href="#music">Music</a></li>
+        <li><a href="#schooling">Education</a></li>
+        <li><a href="#goals">Aspirations</a></li>
+        <li><a href="#hobbies">Hobbies</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+      </ul>
+      <!-- Tweeter toggle: click to protect birds from being shot -->
+      <button id="tweeter-toggle" class="tweeter-toggle" title="Toggle: protect the birds!">
+        <span class="tweeter-bird-icon">🔫🐦</span>
+        <span class="tweeter-label">But I'm a Twitcher!</span>
+      </button>
+      <button class="nav-burger" id="nav-burger" aria-label="Menu">☰</button>
+    </div>
   </nav>
 
-  <!-- ═══════════════════════════════════════
-       HERO — DESERT SUNSET
-  ═══════════════════════════════════════ -->
-  <section id="hero">
-
-    <!-- Sky gradient layers -->
-    <div class="sky-base"  aria-hidden="true"></div>
-    <div class="sky-bands" aria-hidden="true"></div>
-
-    <!-- Animated Sun -->
-    <div class="sun-container" aria-hidden="true">
-      <div class="sun-glow"></div>
-      <div class="sun-disc">
-        <div class="sun-shimmer"></div>
+  <!-- ── LEGEND INTRO ───────────────────────────────────────── -->
+  <section id="legend" class="content-section section-dark">
+    <div class="section-divider-top" aria-hidden="true">
+      <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 60 Q180 20 360 40 Q540 60 720 30 Q900 0 1080 25 Q1260 50 1440 15 L1440 60Z" fill="#0f0a06"/>
+      </svg>
+    </div>
+    <div class="container reveal">
+      <div class="section-header">
+        <div class="rune-ornament">❧</div>
+        <h2 class="section-title">The Legend</h2>
+        <div class="title-rule"><span></span><span class="star-dot">★</span><span></span></div>
       </div>
-    </div>
-
-    <!-- Dust motes - JS fills -->
-    <div id="dustMotes" aria-hidden="true"></div>
-
-    <!-- Marquee top -->
-    <div class="marquee-band marquee-top" aria-hidden="true">
-      <span>✦ WILLIAM SCHOOF MARKETOS ✦ THE REAL DEAL ✦ BORN TO ROAM ✦ DUST &amp; GOLD ✦ CERTIFIED JACKAROO ✦ WILLIAM SCHOOF MARKETOS ✦ THE REAL DEAL ✦ BORN TO ROAM ✦ DUST &amp; GOLD ✦ CERTIFIED JACKAROO ✦ WILLIAM SCHOOF MARKETOS ✦ THE REAL DEAL ✦ BORN TO ROAM ✦ DUST &amp; GOLD ✦ CERTIFIED JACKAROO ✦ WILLIAM SCHOOF MARKETOS ✦ THE REAL DEAL ✦ BORN TO ROAM ✦ DUST &amp; GOLD ✦</span>
-    </div>
-
-    <!-- Hero floating photo frames -->
-    <div class="hero-frame hf-left reveal-img">
-      <div class="wood-frame-hero">
-        <div class="img-placeholder portrait">
-          <span class="img-icon">Images/hoare_hutt.avif</span>
-          <span class="img-label">On the Mountain</span>
+      <div class="legend-text-wrap">
+        <p class="drop-cap">
+          I am a materials science student driven by curiosity and a strong work ethic, with a genuine interest in understanding how the world works from the ground up. My studies have given me a deeper appreciation for the structures, properties, and processes that shape the materials around us, and I'm particularly drawn to applying that knowledge in practical, hands-on ways. I enjoy working with my hands—whether that's building, fixing, or experimenting—and I value the satisfaction that comes from turning ideas into something tangible.
+        </p>
+        <p>
+        </p>
+        <blockquote class="desert-quote">
+          "Those who do not return become a part of the clouds, a part of the animals that hide in the ravines and of the 
+          water that comes from the Earth. They become a part of everything... they become the Soul of the World"
+        </blockquote>
+        <p>
+          Outside of academics, I'm most at home in the outdoors. I have a deep appreciation for nature and spend as much time as I can exploring it, whether that's through hiking, being around animals, or simply taking in the environment. This connection to the natural world fuels my curiosity and keeps me grounded, constantly reminding me of how much there is to learn and understand. I'm someone who enjoys learning broadly - about science, the environment, and the world at large - and I'm always looking for opportunities to grow, challenge myself, and expand my perspective.
+        </p>
+      </div>
+        <div class="legend-portrait-wrap">
+          <div class="photo-frame portrait-frame">
+            <img src="images/rocks.jpeg" alt="William Marketos" class="photo-image">
+            <div class="frame-caption">William Marketos, c. unknown year</div>
+          </div>
         </div>
-      </div>
-      <div class="hero-frame-tag">William, out in the wild</div>
-    </div>
-    <div class="hero-frame hf-right reveal-img">
-      <div class="wood-frame-hero">
-        <div class="img-placeholder portrait">
-          <span class="img-icon">Images/old_excavator.avif</span>
-          <span class="img-label">My Day One</span>
-        </div>
-      </div>
-      <div class="hero-frame-tag">Living the dream</div>
-    </div>
-
-    <!-- Main Hero Text -->
-    <div class="hero-content">
-      <p class="hero-eyebrow reveal">— Est. 2003 —</p>
-
-      <div class="hero-badge-wrap reveal">
-        <svg class="badge-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path id="badgePath" d="M 100,100 m -75,0 a 75,75 0 1,1 150,0 a 75,75 0 1,1 -150,0" fill="none"/>
-          <text class="badge-text-svg" font-size="13.5" letter-spacing="3" fill="#8B5A2B" font-family="Special Elite, serif">
-            <textPath href="#badgePath">Your Local Cowboy ✦ William Marketos ✦</textPath>
-          </text>
-          <text x="100" y="108" text-anchor="middle" font-size="28" fill="#C1440E">★</text>
-        </svg>
-      </div>
-
-      <h1 class="hero-name reveal">
-        <span class="hn-john">WILLIAM</span>
-        <span class="hn-mack">BLEEDIN'</span>
-        <span class="hn-more">MARKETOS</span>
-      </h1>
-
-      <p class="hero-quote reveal"><em>"The trail ain't gonna ride itself."</em></p>
-
-      <div class="hero-cta reveal">
-        <a href="#about"      class="btn btn-primary">Ride On In ›</a>
-        <a href="#soundboard" class="btn btn-ghost">🎸 Hit the Saloon</a>
-      </div>
-    </div>
-
-    <!-- Monument Valley silhouette scene -->
-    <div class="mountain-scene" aria-hidden="true">
-
-      <!-- Far mesas — hazy blue-purple, very distant -->
-      <svg class="mtns mtns-far" viewBox="0 0 1440 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Left distant table mesa -->
-        <polygon points="0,260 0,175 35,175 35,158 160,158 160,175 200,175 200,260" fill="#7B4A9B" opacity="0.22"/>
-        <!-- Small distant pinnacle -->
-        <polygon points="310,260 310,165 330,150 360,150 380,165 380,260" fill="#7B4A9B" opacity="0.18"/>
-        <!-- Center distant mesa -->
-        <polygon points="620,260 620,148 655,148 655,132 760,132 760,148 795,148 795,260" fill="#7B4A9B" opacity="0.2"/>
-        <!-- Right distant butte -->
-        <polygon points="1080,260 1080,158 1108,158 1108,140 1240,140 1240,158 1280,158 1280,260" fill="#7B4A9B" opacity="0.2"/>
-        <!-- Far right sliver -->
-        <polygon points="1360,260 1360,170 1385,170 1385,160 1440,160 1440,260" fill="#7B4A9B" opacity="0.15"/>
-      </svg>
-
-      <!-- Mid layer — the iconic Mittens + Merrick Butte -->
-      <svg class="mtns mtns-mid" viewBox="0 0 1440 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- West Mitten: main column left, thumb jutting right -->
-        <polygon points="
-          285,260  285,72  295,62  340,60  380,62  385,72
-          385,118  440,118  448,112  465,112  470,118
-          470,260
-        " fill="#8B2C0A" opacity="0.72"/>
-        <!-- West Mitten thumb raised tip -->
-        <polygon points="438,118 438,95 448,88 458,88 468,95 468,118" fill="#8B2C0A" opacity="0.72"/>
-
-        <!-- East Mitten: thumb jutting left, main column right -->
-        <polygon points="
-          520,260  520,118  527,112  546,112  554,118
-          554,68   562,58   606,56   648,58   656,68
-          656,260
-        " fill="#9B3412" opacity="0.72"/>
-        <!-- East Mitten thumb raised tip -->
-        <polygon points="520,118 520,92 527,85 537,85 547,92 547,118" fill="#9B3412" opacity="0.72"/>
-
-        <!-- Merrick Butte (wide rectangular mesa, right of center) -->
-        <polygon points="830,260 830,88 842,78 980,78 992,88 992,260" fill="#7A2208" opacity="0.68"/>
-        <!-- Merrick subtle step on left shoulder -->
-        <polygon points="830,138 830,115 845,108 870,108 870,138" fill="#7A2208" opacity="0.68"/>
-
-        <!-- Small pinnacle far left -->
-        <polygon points="80,260 80,170 92,158 118,158 130,170 130,260" fill="#6B1E06" opacity="0.55"/>
-
-        <!-- Low wide mesa far right -->
-        <polygon points="1150,260 1150,148 1162,138 1340,138 1352,148 1352,260" fill="#7A2208" opacity="0.6"/>
-      </svg>
-
-      <!-- Foreground desert shelf — dark jagged near-ground layer -->
-      <svg class="mtns mtns-near" viewBox="0 0 1440 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="
-          M0,260 L0,208
-          L60,202 L60,192 L120,192 L120,202
-          L200,210 L280,205
-          L280,190 L340,190 L340,205
-          L440,212 L560,204
-          L560,188 L620,188 L620,204
-          L720,212 L840,206
-          L840,192 L910,192 L910,206
-          L1020,212 L1130,204
-          L1130,190 L1190,190 L1190,204
-          L1300,210 L1380,206 L1440,208
-          L1440,260 Z
-        " fill="#4A1605" opacity="0.88"/>
-      </svg>
-
-      <!-- Ground band -->
-      <svg class="ground-band" viewBox="0 0 1440 30" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="1440" height="30" fill="#2E0E04"/>
-      </svg>
-
-      <!-- Left cactus -->
-      <svg class="cactus cactus-l" viewBox="0 0 110 200" xmlns="http://www.w3.org/2000/svg">
-        <rect x="48" y="15" width="14" height="185" rx="7" fill="#3D2214"/>
-        <rect x="20" y="65" width="28" height="11" rx="5" fill="#3D2214"/>
-        <rect x="18" y="40" width="12" height="35" rx="6" fill="#3D2214"/>
-        <rect x="62" y="88" width="28" height="11" rx="5" fill="#3D2214"/>
-        <rect x="78" y="64" width="12" height="35" rx="6" fill="#3D2214"/>
-      </svg>
-      <!-- Right cactus -->
-      <svg class="cactus cactus-r" viewBox="0 0 80 155" xmlns="http://www.w3.org/2000/svg">
-        <rect x="34" y="8" width="12" height="147" rx="6" fill="#3D2214"/>
-        <rect x="12" y="52" width="22" height="9" rx="4" fill="#3D2214"/>
-        <rect x="10" y="32" width="10" height="28" rx="5" fill="#3D2214"/>
-        <rect x="46" y="68" width="22" height="9" rx="4" fill="#3D2214"/>
-        <rect x="58" y="48" width="10" height="28" rx="5" fill="#3D2214"/>
-      </svg>
-      <!-- Small cactus -->
-      <svg class="cactus cactus-sm" viewBox="0 0 50 110" xmlns="http://www.w3.org/2000/svg">
-        <rect x="22" y="10" width="8" height="100" rx="4" fill="#3D2214"/>
-        <rect x="8" y="40" width="14" height="7" rx="3" fill="#3D2214"/>
-        <rect x="6" y="28" width="7" height="20" rx="3" fill="#3D2214"/>
-        <rect x="28" y="55" width="14" height="7" rx="3" fill="#3D2214"/>
-        <rect x="35" y="40" width="7" height="22" rx="3" fill="#3D2214"/>
-      </svg>
-
-      <!-- Tumbleweed rolling -->
-      <div class="tumbleweed tw1" aria-hidden="true">
-        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="16" fill="none" stroke="#8B5A2B" stroke-width="2" opacity="0.7"/>
-          <line x1="4" y1="20" x2="36" y2="20" stroke="#8B5A2B" stroke-width="1.5" opacity="0.6"/>
-          <line x1="20" y1="4" x2="20" y2="36" stroke="#8B5A2B" stroke-width="1.5" opacity="0.6"/>
-          <line x1="8"  y1="8"  x2="32" y2="32" stroke="#8B5A2B" stroke-width="1.2" opacity="0.5"/>
-          <line x1="32" y1="8"  x2="8"  y2="32" stroke="#8B5A2B" stroke-width="1.2" opacity="0.5"/>
-          <circle cx="20" cy="20" r="3" fill="#8B5A2B" opacity="0.5"/>
-        </svg>
-      </div>
-      <div class="tumbleweed tw2" aria-hidden="true">
-        <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="14" cy="14" r="11" fill="none" stroke="#A07040" stroke-width="1.5" opacity="0.6"/>
-          <line x1="3" y1="14" x2="25" y2="14" stroke="#A07040" stroke-width="1.2" opacity="0.5"/>
-          <line x1="14" y1="3" x2="14" y2="25" stroke="#A07040" stroke-width="1.2" opacity="0.5"/>
-          <line x1="6"  y1="6"  x2="22" y2="22" stroke="#A07040" stroke-width="1" opacity="0.4"/>
-          <line x1="22" y1="6"  x2="6"  y2="22" stroke="#A07040" stroke-width="1" opacity="0.4"/>
-        </svg>
-      </div>
-    </div>
-
-    <!-- Marquee bottom -->
-    <div class="marquee-band marquee-bottom" aria-hidden="true">
-      <span>✦ LIVING LOUD ✦ STAYING TRUE ✦ WILD &amp; FREE ✦ RIDE OR DIE ✦ LIVING LOUD ✦ STAYING TRUE ✦ WILD &amp; FREE ✦ RIDE OR DIE ✦ LIVING LOUD ✦ STAYING TRUE ✦ WILD &amp; FREE ✦ RIDE OR DIE ✦ LIVING LOUD ✦ STAYING TRUE ✦ WILD &amp; FREE ✦ RIDE OR DIE ✦</span>
-    </div>
-
-    <div class="scroll-hint">
-      <span>SCROLL DOWN</span>
-      <div class="scroll-line"></div>
     </div>
   </section>
 
-  <!-- ══ ROPE DIVIDER ══ -->
-  <div class="rope-divider" aria-hidden="true">
-    <div class="rope-strand"></div><span class="rope-badge">✦</span><div class="rope-strand"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       ABOUT ME
-  ═══════════════════════════════════════ -->
-  <section id="about" class="section">
-    <div class="section-inner">
-      <div class="section-tag reveal">~ 01 ~ About Me ~</div>
-      <h2 class="section-title reveal">Who Is <span class="hl-gold">William?</span></h2>
-
-      <div class="about-grid">
-        <div class="about-text reveal">
-          <p class="big-p">
-            Howdy — I'm <strong>William Marketos</strong>, and I live life like a long open road:
-            full throttle, eyes wide open, wind in my face.
-          </p>
-          <p>
-            ✏️ Write something personal about yourself here — your personality, where you're from,
-            what makes you tick. Talk about your passions, your people, your dreams.
-          </p>
-          <p>
-            🌵 Whether you're a city slicker or a country soul, this is your space to tell your story.
-            Add your hometown, your values, or a quote that captures exactly who you are.
-          </p>
-          <div class="about-stats">
-            <div class="stat-card reveal">
-              <span class="stat-num" data-target="0">0</span>
-              <span class="stat-label">Years Young</span>
-            </div>
-            <div class="stat-card reveal">
-              <span class="stat-num" data-target="0">0</span>
-              <span class="stat-label">Hobbies</span>
-            </div>
-            <div class="stat-card reveal">
-              <span class="stat-num" data-target="0">0</span>
-              <span class="stat-label">Miles Travelled</span>
-            </div>
+  <!-- ── MUSIC PLAYER ───────────────────────────────────────── -->
+  <section id="music" class="content-section section-night">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="rune-ornament">♪</div>
+        <h2 class="section-title">Desert Sounds</h2>
+        <div class="title-rule"><span></span><span class="star-dot">★</span><span></span></div>
+        <p class="section-sub">Pick the sound you would like to lead you on your journey</p>
+      </div>
+      <div class="jukebox reveal">
+        <div class="jukebox-screen">
+          <div class="jukebox-now-playing">
+            <span class="np-label">NOW PLAYING</span>
+            <p class="np-title" id="np-title">Select a track below</p>
+            <p class="np-artist" id="np-artist">— —</p>
+          </div>
+          <div class="jukebox-visualiser" id="visualiser">
+            <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+            <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+            <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+            <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
           </div>
         </div>
+        <div class="jukebox-controls">
+          <button class="jb-btn" id="btn-prev" title="Previous">⏮</button>
+          <button class="jb-btn jb-play" id="btn-play" title="Play / Pause">▶</button>
+          <button class="jb-btn" id="btn-next" title="Next">⏭</button>
+        </div>
+        <div class="jukebox-progress-wrap">
+          <span id="time-current">0:00</span>
+          <div class="jukebox-progress" id="jb-progress-bar">
+            <div class="jukebox-progress-fill" id="jb-progress-fill"></div>
+          </div>
+          <span id="time-total">0:00</span>
+        </div>
+        <div class="track-list" id="track-list">
+          <!-- tracks injected by JS -->
+        </div>
+        <audio id="music-player"></audio>
+        <p class="music-note">
+        </p>
+      </div>
+    </div>
+  </section>
 
-        <div class="about-images reveal">
-          <div class="wood-frame wf-main tilt-card">
-            <div class="wf-border">
-              <div class="img-placeholder tall-port">
-                <span class="img-icon">🧑‍🌾</span>
-                <span class="img-label">Main Profile Photo</span>
-              </div>
+  <!-- ── SCHOOLING ─────────────────────────────────────────── -->
+  <section id="schooling" class="content-section section-dark-warm">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="rune-ornament">⊕</div>
+        <h2 class="section-title">Schooling</h2>
+        <div class="title-rule"><span></span><span class="star-dot">★</span><span></span></div>
+        <p class="section-sub">The world is his classroom</p>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item reveal">
+          <div class="timeline-marker">I</div>
+          <div class="timeline-content">
+            <h3>KEPS and beyond (Ages 5-7, 8–14)</h3>
+            <div class="photo-frame mini-frame">
+              <img src="images/wickey.jpeg" alt="Farm schoolhouse" class="photo-image">
             </div>
-            <div class="wf-caption">That's me! 🤠</div>
+            <p>I went to King Edward VII Preparatory school in Johannesburg. A public school in Houghton.</p>
           </div>
-          <div class="wood-frame wf-sm wf-sm-a tilt-card">
-            <div class="wf-border">
-              <div class="img-placeholder square-sm">
-                <span class="img-icon">📷</span>
-                <span class="img-label">Candid Moment</span>
-              </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-marker">II</div>
+          <div class="timeline-content">
+            <h3>The Outback (Ages 7-8)</h3>
+            <div class="photo-frame mini-frame">
+              <img src="images/oz_outback.jpeg" alt="Boarding school" class="photo-image">
             </div>
+            <p>This year was actually spent in the outback of Australia living out of a caravan with my family.</p>
           </div>
-          <div class="wood-frame wf-sm wf-sm-b tilt-card">
-            <div class="wf-border">
-              <div class="img-placeholder square-sm">
-                <span class="img-icon">🌅</span>
-                <span class="img-label">Sunset Shot</span>
-              </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-marker">III</div>
+          <div class="timeline-content">
+            <h3>KES (Ages 13-18)</h3>
+            <div class="photo-frame mini-frame">
+              <img src="images/cadets.jpeg" alt="The open road" class="photo-image">
             </div>
+            <p>Highschool was a very enjoyable time. I played many sports – Rugby, Athletics, and Rowing, and I participated
+              in First Aid for the School. I was a Prefect and got Team Colours for Rowing and First Aid, and I achieved full
+              Academic Colours and finished 5th in the grade overall, achieving the top awards for Biology, History and Physics.
+            </p>
           </div>
+        </div>
+        <div class="timeline-item reveal">
+          <div class="timeline-marker">IV</div>
+          <div class="timeline-content">
+            <h3>UCT (Ages 18-22)</h3>
+            <div class="photo-frame mini-frame">
+              <img src="images/uct_speech.jpeg" alt="An old tracker" class="photo-image">
+            </div>
+            <p>I have been at the University of Cape Town for almost 5 years now and have learnt a lot. I have done almost 
+              every Science Faculty course at UCT, and several from the Humanities and EBE faculties too. I love learning 
+              new and interesting things and this passion is what has lead me to taking so many electives, and also to changing
+              my Major so many times in undergrad. I eventually settled on Chemistry and Computer Science and graduated with distinction
+              in Chemistry and the degree with distiction. I am not in my Materials Science Honours course and am very much looking
+              forward to what this year has in store for me.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CV & Transcript Links ─────────────────────────────── -->
+      <div class="cv-links-wrap reveal">
+        <div class="cv-links-header">
+          <div class="title-rule"><span></span><span class="star-dot">★</span><span></span></div>
+          <p class="cv-links-sub">Documents of Record</p>
+        </div>
+        <div class="cv-links-row">
+          <a href="documents/CV.pdf" target="_blank" rel="noopener" class="cv-link-btn">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Read CV
+          </a>
+          <a href="documents/transcript.pdf" target="_blank" rel="noopener" class="cv-link-btn">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Read Transcript
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── GOALS & DREAMS ────────────────────────────────────── -->
+  <section id="goals" class="content-section section-medium">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="rune-ornament">◎</div>
+        <h2 class="section-title">Aspirations
+        </h2>
+        <div class="title-rule"><span></span><span class="star-dot">★</span><span></span></div>
+        <p class="section-sub">Always living in the Moment. Always dreaming of the Future.</p>
+      </div>
+      <div class="goals-grid">
+        <div class="goal-card reveal" data-delay="0">
+          <div class="goal-icon">🔥</div>
+          <h3>To be a fireman</h3>
+          <p>I am already a volunteer with VWS and I plan on using these skills to one day become a full-time firefighter, at least for a couple of years.</p>
+          <div class="goal-progress">
+          </div>
+        </div>
+        <div class="goal-card reveal" data-delay="100">
+          <div class="goal-icon">🦏</div>
+          <h3>Spend six months in the bush</h3>
+          <p>I have plans to work in the bush as a Rhino monitor in early-mid 2027. I am very excited for this.</p>
+          <div class="goal-progress">
+          </div>
+        </div>
+        <div class="goal-card reveal" data-delay="200">
+          <div class="goal-icon">🐄</div>
+          <h3>Work on a Ranch</h3>
+          <p>After my time on in the Bush I plan on moving to Australia temporarily and working on a Ranch there. I already have plans to learn how to ride a horse and motorcycle at my uncle's farm during the upcoming July break.</p>
+        </div>
+        <div class="goal-card reveal" data-delay="300">
+          <div class="goal-icon">📖</div>
+          <h3>Write a book</h3>
+          <p>I love reading and literature and it has been a dream of mine for the longest time to write a book. I think I will only realise this dream later in life but it is a very fun thing to think about and ponder.</p>
+        </div>
+        <div class="goal-card reveal" data-delay="400">
+          <div class="goal-icon">🎶</div>
+          <h3>Make a song</h3>
+          <p>Along the same vein as the book I would like to create a one-hit-wonder. A bit tricky since I can't play any instrument yet but I'm not going to let that kill the dream!</p>
+        </div>
+        <div class="goal-card reveal" data-delay="500">
+          <div class="goal-icon">🏡</div>
+          <h3>Have a loving wife and family</h3>
+          <p>My biggest aspiration. Everything is building up to this and it would be the ultimate fulfillment. Let's hope it happens hey!</p>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="rope-divider" aria-hidden="true">
-    <div class="rope-strand"></div><span class="rope-badge">🤠</span><div class="rope-strand"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       SCHOOL LIFE
-  ═══════════════════════════════════════ -->
-  <section id="school" class="section section-alt">
-    <div class="section-inner">
-      <div class="section-tag reveal">~ 02 ~ School Life ~</div>
-      <h2 class="section-title reveal">The <span class="hl-rust">Academic</span><br/>Trail</h2>
-
-      <div class="school-grid">
-        <div class="school-trail">
-
-          <div class="trail-item reveal">
-            <div class="trail-marker">
-              <div class="trail-icon">👢</div>
-              <div class="trail-stem"></div>
-            </div>
-            <div class="trail-card">
-              <div class="trail-year">Year ????</div>
-              <h3>Primary School</h3>
-              <p>✏️ Write about your primary school days — favourite teachers, best memories,
-                 that one chaotic moment that still makes you laugh years later.</p>
-              <div class="trail-img">
-                <div class="img-placeholder landscape-sm">
-                  <span class="img-icon">🏫</span>
-                  <span class="img-label">School Photo</span>
-                </div>
-              </div>
+  <!-- ── HOBBIES ────────────────────────────────────────────── -->
+  <section id="hobbies" class="content-section section-dark">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="rune-ornament">⚘</div>
+        <h2 class="section-title">Hobbies &amp; Passions</h2>
+        <div class="title-rule"><span></span><span class="star-dot">★</span><span></span></div>
+        <p class="section-sub">A life lived in full, unhurried colour</p>
+      </div>
+      <div class="hobbies-wrap">
+        <div class="hobby-item reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/drawing_bird.jpeg" alt="Birds Without Wings" class="photo-image">
             </div>
           </div>
-
-          <div class="trail-item reveal">
-            <div class="trail-marker">
-              <div class="trail-icon">🌟</div>
-              <div class="trail-stem"></div>
-            </div>
-            <div class="trail-card">
-              <div class="trail-year">Year ????</div>
-              <h3>High School</h3>
-              <p>✏️ The sports teams, the drama, the exams, the crew you rode with.
-                 What defined your high school chapter?</p>
-              <div class="trail-img">
-                <div class="img-placeholder landscape-sm">
-                  <span class="img-icon">🎒</span>
-                  <span class="img-label">High School</span>
-                </div>
-              </div>
-            </div>
+          <div class="hobby-text">
+            <h3>Doodling in his Journal</h3>
+            <p>I have written down almost every day of my adult life in my Journal along with many of my musings and thoughts.
+              I draw frequently in it as well, and really enjoy it. It is a nice escape and a way to express myself and my thoughts in a different way.
+            </p>
           </div>
-
-          <div class="trail-item reveal">
-            <div class="trail-marker">
-              <div class="trail-icon">🎓</div>
-            </div>
-            <div class="trail-card">
-              <div class="trail-year">Present</div>
-              <h3>University / Current Chapter</h3>
-              <p>✏️ What you're studying, what campus life looks like, and where the trail
-                 is headed next — your current chapter in full.</p>
-              <div class="trail-img">
-                <div class="img-placeholder landscape-sm">
-                  <span class="img-icon">📚</span>
-                  <span class="img-label">Campus Life</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
-
-        <div class="school-aside reveal">
-          <div class="parchment-card">
-            <h3 class="pc-title">🏅 Achievements</h3>
-            <ul class="ach-list">
-              <li><span class="spur-star">✦</span> Add your achievement here</li>
-              <li><span class="spur-star">✦</span> Another proud moment</li>
-              <li><span class="spur-star">✦</span> Something you're truly proud of</li>
-              <li><span class="spur-star">✦</span> That award you can't stop mentioning</li>
-            </ul>
-          </div>
-          <div class="parchment-card" style="margin-top:1.5rem;">
-            <h3 class="pc-title">📐 Favourite Subjects</h3>
-            <div class="western-tags">
-              <span class="w-tag">Add Subject</span>
-              <span class="w-tag">Add Subject</span>
-              <span class="w-tag">Add Subject</span>
-              <span class="w-tag">Add Subject</span>
+        <div class="hobby-item hobby-reverse reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/sossusvlei_handstand.jpeg" alt="Handstand in Sossusvlei" class="photo-image">
             </div>
           </div>
-          <div class="parchment-card aside-photo" style="margin-top:1.5rem;">
-            <div class="img-placeholder square-md">
-              <span class="img-icon">🔥</span>
-              <span class="img-label">A Favourite Memory</span>
+          <div class="hobby-text">
+            <h3>Exploring the World</h3>
+            <p>I love travelling and plan to do many an adventure in my lifetime. I have already driven across Namibia and gone
+              offroading in Botswana. I have family in Greece, Spain, Australia, Germany, Thailand and the UK and so have spent time in each
+              of those countries visiting them. I love the excitement and adventure of it but to be honest South Africa is still my home and far and away my fanourite place to be.
+            </p>
+          </div>
+        </div>
+        <div class="hobby-item reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/dop_artists.jpeg" alt="The Dop Artists Themselves" class="photo-image">
             </div>
-            <p class="aside-caption">✏️ A caption</p>
+          </div>
+          <div class="hobby-text">
+            <h3>Dopping</h3>
+            <p>There is just nothing quite like a beer with a good friend to lighten up your day.</p>
+          </div>
+        </div>
+        <div class="hobby-item hobby-reverse reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/mr_boxers.jpeg" alt="Inspiring Smuts Hall c.2024" class="photo-image">
+            </div>
+          </div>
+          <div class="hobby-text">
+            <h3>Inspiring Others</h3>
+            <p>I have given many a speech in my time, from my time as a prefect in highschool to me being in the House Committee in my residence in University.
+              I always love the opportunity to inspire others and share my thoughts and ideas with them, and I hope to do much more of it in the future.
+            </p>
+          </div>
+        </div>
+        <div class="hobby-item reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/vws_helicopter.jpeg" alt="William in his Firefighting Helicopter" class="photo-image">
+            </div>
+          </div>
+          <div class="hobby-text">
+            <h3>Saving Lives</h3>
+            <p>I love saving lives.</p>
+          </div>
+        </div>
+        <div class="hobby-item hobby-reverse reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/argus.jpeg" alt="William doing the Argus in plakkies and rugby broeke" class="photo-image">
+            </div>
+          </div>
+          <div class="hobby-text">
+            <h3>Adventuring</h3>
+            <p>Never one to turn down an invitation I have done multi-day hikesin the Kruger National Park, spent many a cold night atop the Drakensburg,
+              slept in my car in the middle of the Namib desert during a sandstorm, done GunRun in under 2 hours with an injured ankle,
+              and done the Argus in plakkies and rugby broeke. I love a good adventure and am always looking for the next one.
+            </p>
+          </div>
+        </div>
+        <div class="hobby-item reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/vws_helicopter.jpeg" alt="Donating to those in need" class="photo-image">
+            </div>
+          </div>
+          <div class="hobby-text">
+            <h3>Donating to those in Need</h3>
+            <p>I am willing to donate almost every thing I have. I have donated blood, am a registered organ donor, have applied to be a stem-cell donor and
+              have a kid.
+            </p>
+          </div>
+        </div>
+        <div class="hobby-item hobby-reverse reveal">
+          <div class="hobby-img">
+            <div class="photo-frame square-frame">
+              <img src="images/boxing.jpeg" alt="Undefeated in the ring" class="photo-image">
+            </div>
+          </div>
+          <div class="hobby-text">
+            <h3>Boxing</h3>
+            <p>William carries a small hardbound sketchbook at all times. His drawings are meticulous, careful things — plants, rock formations, bird profiles, maps of places, diagrams of star positions. His journals are equally careful: observations of weather, animal behaviour, conversations remembered verbatim. He has filled 47 such notebooks since age 14.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="rope-divider" aria-hidden="true">
-    <div class="rope-strand"></div><span class="rope-badge">🌵</span><div class="rope-strand"></div>
-  </div>
 
-  <!-- ═══════════════════════════════════════
-       HOBBIES
-  ═══════════════════════════════════════ -->
-  <section id="hobbies" class="section">
-    <div class="section-inner">
-      <div class="section-tag reveal">~ 03 ~ Hobbies ~</div>
-      <h2 class="section-title reveal">What Gets<br/><span class="hl-sage">Me Going</span></h2>
-
-      <div class="hobbies-grid">
-
-        <div class="hobby-card hc-wide reveal tilt-card">
-          <div class="hc-stamp">🎸</div>
-          <div class="hc-text">
-            <h3>Music</h3>
-            <p>✏️ Write about your love for music — genres, instruments, what music means to you.</p>
-          </div>
-          <div class="hc-photo">
-            <div class="img-placeholder landscape-md">
-              <span class="img-icon">🎵</span>
-              <span class="img-label">Music Moment</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hobby-card reveal tilt-card">
-          <div class="hc-stamp">🌄</div>
-          <div class="hc-text">
-            <h3>The Outdoors</h3>
-            <p>✏️ Hikes, camping, adventures in the wild — where you go to feel alive.</p>
-          </div>
-          <div class="hc-photo">
-            <div class="img-placeholder landscape-sm">
-              <span class="img-icon">⛰️</span>
-              <span class="img-label">Outdoor Adventure</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hobby-card reveal tilt-card">
-          <div class="hc-stamp">✏️</div>
-          <div class="hc-text">
-            <h3>Your Hobby</h3>
-            <p>✏️ Describe one of your main hobbies — how it started and why it matters.</p>
-          </div>
-          <div class="hc-photo">
-            <div class="img-placeholder landscape-sm">
-              <span class="img-icon">📸</span>
-              <span class="img-label">Hobby Photo</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hobby-card reveal tilt-card">
-          <div class="hc-stamp">🎮</div>
-          <div class="hc-text">
-            <h3>Gaming / Tech</h3>
-            <p>✏️ Games you play, tech things you build, or anything digital that fascinates you.</p>
-          </div>
-          <div class="hc-photo">
-            <div class="img-placeholder landscape-sm">
-              <span class="img-icon">🕹️</span>
-              <span class="img-label">Gaming Setup</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hobby-card hc-tall reveal tilt-card">
-          <div class="hc-stamp">📚</div>
-          <div class="hc-text">
-            <h3>Reading &amp; Learning</h3>
-            <p>✏️ Favourite books, podcasts, topics you fall down rabbit holes in.</p>
-          </div>
-          <div class="hc-photo">
-            <div class="img-placeholder portrait-md">
-              <span class="img-icon">📖</span>
-              <span class="img-label">Bookshelf</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hobby-card reveal tilt-card">
-          <div class="hc-stamp">🎨</div>
-          <div class="hc-text">
-            <h3>Creative Side</h3>
-            <p>✏️ Art, photography, content — your creative outlet and what it means to you.</p>
-          </div>
-          <div class="hc-photo">
-            <div class="img-placeholder landscape-sm">
-              <span class="img-icon">🖌️</span>
-              <span class="img-label">Creative Work</span>
-            </div>
-          </div>
-        </div>
-
+  <!-- ── PHOTO GALLERY ─────────────────────────────────────── -->
+  <section id="gallery" class="content-section section-warm">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="rune-ornament">⬡</div>
+        <h2 class="section-title">Gallery</h2>
+        <div class="title-rule"><span></span><span class="star-dot">★</span><span></span></div>
+        <p class="section-sub">William in all His glory</p>
       </div>
-    </div>
-  </section>
-
-  <div class="rope-divider" aria-hidden="true">
-    <div class="rope-strand"></div><span class="rope-badge">⭐</span><div class="rope-strand"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       FUN FACTS — WANTED POSTERS
-  ═══════════════════════════════════════ -->
-  <section id="facts" class="section section-wanted">
-    <div class="section-inner">
-      <div class="section-tag reveal">~ 04 ~ Wanted ~</div>
-      <h2 class="section-title reveal">Things You<br/><span class="hl-gold">Didn't Know</span></h2>
-      <p class="section-sub reveal">Six facts — straight from the frontier.</p>
-
-      <div class="wanted-grid">
-
-        <div class="wanted-poster reveal" style="--poster-rot: -2deg">
-          <div class="wp-header">WANTED</div>
-          <div class="wp-mugshot"><span>🤯</span></div>
-          <div class="wp-body">
-            <p class="wp-num">FACT No. 1</p>
-            <p>✏️ Write a surprising fact about yourself — something nobody would ever guess.</p>
-          </div>
-          <div class="wp-footer">REWARD: YOUR RESPECT</div>
-        </div>
-
-        <div class="wanted-poster reveal" style="--poster-rot: 1.5deg">
-          <div class="wp-header">WANTED</div>
-          <div class="wp-mugshot"><span>😄</span></div>
-          <div class="wp-body">
-            <p class="wp-num">FACT No. 2</p>
-            <p>✏️ A quirky habit or daily ritual that makes you completely and uniquely you.</p>
-          </div>
-          <div class="wp-footer">DEAD OR ALIVE</div>
-        </div>
-
-        <div class="wanted-poster reveal" style="--poster-rot: -1deg">
-          <div class="wp-header">WANTED</div>
-          <div class="wp-mugshot"><span>🎪</span></div>
-          <div class="wp-body">
-            <p class="wp-num">FACT No. 3</p>
-            <p>✏️ Your weirdest talent — the one that wins every single party trick contest.</p>
-          </div>
-          <div class="wp-footer">REWARD: YOUR ADMIRATION</div>
-        </div>
-
-        <div class="wanted-poster reveal" style="--poster-rot: 2.5deg">
-          <div class="wp-header">WANTED</div>
-          <div class="wp-mugshot"><span>🍕</span></div>
-          <div class="wp-body">
-            <p class="wp-num">FACT No. 4</p>
-            <p>✏️ Your controversial food combo that nobody else gets but you swear by.</p>
-          </div>
-          <div class="wp-footer">APPROACH WITH CAUTION</div>
-        </div>
-
-        <div class="wanted-poster reveal" style="--poster-rot: -1.5deg">
-          <div class="wp-header">WANTED</div>
-          <div class="wp-mugshot"><span>⚡</span></div>
-          <div class="wp-body">
-            <p class="wp-num">FACT No. 5</p>
-            <p>✏️ A skill nobody expected you to have but absolutely blew people away.</p>
-          </div>
-          <div class="wp-footer">LAST SEEN: BEING AWESOME</div>
-        </div>
-
-        <div class="wanted-poster reveal" style="--poster-rot: 1deg">
-          <div class="wp-header">WANTED</div>
-          <div class="wp-mugshot"><span>🔥</span></div>
-          <div class="wp-body">
-            <p class="wp-num">FACT No. 6</p>
-            <p>✏️ Your most controversial hot take. Music, movies, sport — lay it all out.</p>
-          </div>
-          <div class="wp-footer">CONSIDER ARMED &amp; WITTY</div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <div class="rope-divider" aria-hidden="true">
-    <div class="rope-strand"></div><span class="rope-badge">🎸</span><div class="rope-strand"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       MUSIC
-  ═══════════════════════════════════════ -->
-  <section id="music-section" class="section section-alt">
-    <div class="section-inner">
-      <div class="section-tag reveal">~ 05 ~ My Music ~</div>
-      <h2 class="section-title reveal">The <span class="hl-rust">Playlist</span><br/>of My Life</h2>
-
-      <div class="music-layout">
-
-        <div class="music-left reveal">
-          <p class="big-p">Music is the campfire that keeps the darkness back.</p>
-          <p>✏️ Write about your relationship with music — when you discovered it, what genres
-             define you, artists who changed your world, gigs you've been to, or music you make yourself.</p>
-          <p>✏️ Paste a Spotify embed or just fill in your favourite tracks in the jukebox.</p>
-
-          <div class="genre-wrap">
-            <h3 class="genre-title">Genres I Ride With</h3>
-            <div class="genre-pills">
-              <span class="genre-pill" style="--pc:#C1440E">Add Genre</span>
-              <span class="genre-pill" style="--pc:#D4961A">Add Genre</span>
-              <span class="genre-pill" style="--pc:#7A9B6E">Add Genre</span>
-              <span class="genre-pill" style="--pc:#8B5A2B">Add Genre</span>
-              <span class="genre-pill" style="--pc:#C4813A">Add Genre</span>
-              <span class="genre-pill" style="--pc:#6B3B2A">Add Genre</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Jukebox card -->
-        <div class="jukebox reveal">
-          <div class="jukebox-arch">
-            <div class="jb-arch-inner">🎶 All-Time Favourites 🎶</div>
-          </div>
-          <div class="jukebox-screen">
-            <div class="track-item" tabindex="0">
-              <span class="t-num">A1</span>
-              <div class="t-info"><span class="t-title">Song Title</span><span class="t-artist">Artist Name</span></div>
-              <span class="t-dur">0:00</span>
-            </div>
-            <div class="track-item" tabindex="0">
-              <span class="t-num">A2</span>
-              <div class="t-info"><span class="t-title">Song Title</span><span class="t-artist">Artist Name</span></div>
-              <span class="t-dur">0:00</span>
-            </div>
-            <div class="track-item" tabindex="0">
-              <span class="t-num">B1</span>
-              <div class="t-info"><span class="t-title">Song Title</span><span class="t-artist">Artist Name</span></div>
-              <span class="t-dur">0:00</span>
-            </div>
-            <div class="track-item" tabindex="0">
-              <span class="t-num">B2</span>
-              <div class="t-info"><span class="t-title">Song Title</span><span class="t-artist">Artist Name</span></div>
-              <span class="t-dur">0:00</span>
-            </div>
-            <div class="track-item" tabindex="0">
-              <span class="t-num">C1</span>
-              <div class="t-info"><span class="t-title">Song Title</span><span class="t-artist">Artist Name</span></div>
-              <span class="t-dur">0:00</span>
-            </div>
-          </div>
-          <div class="jukebox-foot">✦ Insert coin &amp; enjoy ✦</div>
-        </div>
-
-        <!-- Spotify block -->
-        <div class="spotify-block reveal">
-          <span class="sp-icon">🐎</span>
-          <p><strong>Saddle Up Your Playlist Here</strong></p>
-          <p class="sp-small">Replace this with your Spotify embed iframe</p>
-          <code class="code-hint">&lt;iframe src="https://open.spotify.com/embed/playlist/YOUR_ID" ...&gt;</code>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <div class="rope-divider" aria-hidden="true">
-    <div class="rope-strand"></div><span class="rope-badge">🎵</span><div class="rope-strand"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       SOUNDBOARD — THE SALOON
-  ═══════════════════════════════════════ -->
-  <section id="soundboard" class="section section-saloon">
-    <div class="section-inner">
-      <div class="section-tag reveal">~ 06 ~ The Saloon ~</div>
-      <h2 class="section-title reveal">Belly Up<br/><span class="hl-gold">to the Bar</span></h2>
-      <p class="soundboard-sub reveal">Hit every pad or use the keyboard shortcuts. Mix freely. No rules out here. 🤠</p>
-
-      <div class="saloon-sign reveal">
-        <div class="ss-inner">
-          <span>★</span>&nbsp; MARK'S SOUND SALOON &nbsp;<span>★</span>
-        </div>
-        <div class="ss-hooks">
-          <div class="ss-hook"></div><div class="ss-hook"></div>
-        </div>
-      </div>
-
-      <div class="soundboard-grid reveal">
-        <button class="sound-pad sp-stomp"   data-sound="kick"    data-label="BOOT STOMP"     aria-label="Boot stomp">
-          <span class="sp-icon">👢</span><span class="sp-name">BOOT STOMP</span><span class="sp-key">Q</span>
-        </button>
-        <button class="sound-pad sp-whip"    data-sound="snare"   data-label="WHIP CRACK"     aria-label="Whip crack">
-          <span class="sp-icon">💥</span><span class="sp-name">WHIP CRACK</span><span class="sp-key">W</span>
-        </button>
-        <button class="sound-pad sp-spur"    data-sound="hihat"   data-label="SPUR JINGLE"    aria-label="Spur jingle">
-          <span class="sp-icon">⭐</span><span class="sp-name">SPUR JINGLE</span><span class="sp-key">E</span>
-        </button>
-        <button class="sound-pad sp-clap"    data-sound="clap"    data-label="RODEO CLAP"     aria-label="Rodeo clap">
-          <span class="sp-icon">🤠</span><span class="sp-name">RODEO CLAP</span><span class="sp-key">R</span>
-        </button>
-        <button class="sound-pad sp-bass"    data-sound="bass"    data-label="TUMBLEWEED BASS" aria-label="Tumbleweed bass">
-          <span class="sp-icon">🌾</span><span class="sp-name">TUMBLEWEED</span><span class="sp-key">A</span>
-        </button>
-        <button class="sound-pad sp-piano"   data-sound="synth"   data-label="SALOON PIANO"   aria-label="Saloon piano">
-          <span class="sp-icon">🎹</span><span class="sp-name">SALOON PIANO</span><span class="sp-key">S</span>
-        </button>
-        <button class="sound-pad sp-lasso"   data-sound="laser"   data-label="LASSO SWING"    aria-label="Lasso swing">
-          <span class="sp-icon">🪢</span><span class="sp-name">LASSO SWING</span><span class="sp-key">D</span>
-        </button>
-        <button class="sound-pad sp-cattle"  data-sound="airhorn" data-label="CATTLE CALL"    aria-label="Cattle call">
-          <span class="sp-icon">🐄</span><span class="sp-name">CATTLE CALL</span><span class="sp-key">F</span>
-        </button>
-        <button class="sound-pad sp-scratch" data-sound="vinyl"   data-label="SADDLE SCRATCH" aria-label="Saddle scratch">
-          <span class="sp-icon">🐴</span><span class="sp-name">SADDLE SCRATCH</span><span class="sp-key">Z</span>
-        </button>
-        <button class="sound-pad sp-wind"    data-sound="woosh"   data-label="DESERT WIND"    aria-label="Desert wind">
-          <span class="sp-icon">🌵</span><span class="sp-name">DESERT WIND</span><span class="sp-key">X</span>
-        </button>
-        <button class="sound-pad sp-bell"    data-sound="chime"   data-label="CHURCH BELLS"   aria-label="Church bells">
-          <span class="sp-icon">🔔</span><span class="sp-name">CHURCH BELLS</span><span class="sp-key">C</span>
-        </button>
-        <button class="sound-pad sp-thunder" data-sound="boom"    data-label="THUNDER ROLL"   aria-label="Thunder roll">
-          <span class="sp-icon">⛈️</span><span class="sp-name">THUNDER ROLL</span><span class="sp-key">V</span>
-        </button>
-      </div>
-
-      <div class="sb-display reveal">
-        <div class="sb-label" id="soundDisplay">— Mosey on over and press a pad —</div>
-        <div class="viz-bars" id="vizBars">
-          <div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div>
-          <div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div>
-          <div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div>
-          <div class="vb"></div><div class="vb"></div><div class="vb"></div><div class="vb"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="rope-divider" aria-hidden="true">
-    <div class="rope-strand"></div><span class="rope-badge">📸</span><div class="rope-strand"></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       GALLERY
-  ═══════════════════════════════════════ -->
-  <section id="gallery" class="section">
-    <div class="section-inner">
-      <div class="section-tag reveal">~ 07 ~ Gallery ~</div>
-      <h2 class="section-title reveal">Life in<br/><span class="hl-gold">Pictures</span></h2>
-      <p class="section-sub reveal">✏️ Replace placeholders by swapping in <code>&lt;img&gt;</code> tags with your own photo paths.</p>
-
       <div class="gallery-grid">
-        <div class="gallery-item gi-wide reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">📸</span><span class="img-label">Featured Photo — Wide</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Wide panoramic landscape -->
+        <div class="gallery-item reveal wide-item" data-delay="0">
+          <div class="photo-frame gallery-frame">
+            <img src="images/day_one.jpeg" alt="William as a Fiersome Dragon" class="photo-image">
+            <div class="gallery-caption">William and his Day One</div>
           </div>
-          <div class="gallery-caption">Add caption here</div>
         </div>
-        <div class="gallery-item reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">🌄</span><span class="img-label">Photo 2</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Portrait / tall -->
+        <div class="gallery-item reveal portrait-gallery-item" data-delay="100">
+          <div class="photo-frame gallery-frame">
+            <img src="images/baby_dragon.jpeg" alt="Eagle in flight" class="photo-image">
+            <div class="gallery-caption">William as a Fiersome Dragon</div>
           </div>
-          <div class="gallery-caption">Caption</div>
         </div>
-        <div class="gallery-item reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">🎉</span><span class="img-label">Photo 3</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Square -->
+        <div class="gallery-item reveal square-gallery-item" data-delay="200">
+          <div class="photo-frame gallery-frame">
+            <img src="images/william_way.jpeg" alt="Rock formation" class="photo-image">
+            <div class="gallery-caption">The only way</div>
           </div>
-          <div class="gallery-caption">Caption</div>
         </div>
-        <div class="gallery-item gi-tall reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">🏆</span><span class="img-label">Photo 4 — Tall</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Standard 4:3 -->
+        <div class="gallery-item reveal" data-delay="0">
+          <div class="photo-frame gallery-frame">
+            <img src="images/goldreef.jpeg" alt="Campfire night" class="photo-image">
+            <div class="gallery-caption">A Calming Nap</div>
           </div>
-          <div class="gallery-caption">Caption</div>
         </div>
-        <div class="gallery-item reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">🎸</span><span class="img-label">Photo 5</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Wide landscape (16:9) -->
+        <div class="gallery-item reveal large-item" data-delay="100">
+          <div class="photo-frame gallery-frame">
+            <img src="images/fam_greece.jpeg" alt="Milky Way" class="photo-image">
+            <div class="gallery-caption">William's family</div>
           </div>
-          <div class="gallery-caption">Caption</div>
         </div>
-        <div class="gallery-item reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">🌟</span><span class="img-label">Photo 6</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Portrait / tall -->
+        <div class="gallery-item reveal portrait-gallery-item" data-delay="200">
+          <div class="photo-frame gallery-frame">
+            <img src="images/face.jpeg" alt="Wildlife encounter" class="photo-image">
+            <div class="gallery-caption">The things he loves</div>
           </div>
-          <div class="gallery-caption">Caption</div>
         </div>
-        <div class="gallery-item reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">🌅</span><span class="img-label">Photo 7</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Square -->
+        <div class="gallery-item reveal square-gallery-item" data-delay="0">
+          <div class="photo-frame gallery-frame">
+            <img src="images/cowboy.jpeg" alt="Field notebook" class="photo-image">
+            <div class="gallery-caption">In the Desert</div>
           </div>
-          <div class="gallery-caption">Caption</div>
         </div>
-        <div class="gallery-item reveal tilt-card">
-          <div class="daguerreotype">
-            <div class="img-placeholder gallery-ph"><span class="img-icon">🤝</span><span class="img-label">Photo 8</span></div>
-            <div class="dg-vignette"></div>
+
+        <!-- Wide landscape (21:9 panoramic) -->
+        <div class="gallery-item reveal wide-item" data-delay="100">
+          <div class="photo-frame gallery-frame">
+            <img src="images/deathdive.jpeg" alt="Sand dunes" class="photo-image">
+            <div class="gallery-caption">Deathdiving off a Cliff</div>
           </div>
-          <div class="gallery-caption">Caption</div>
         </div>
+
+        <!-- Standard 4:3 -->
+        <div class="gallery-item reveal" data-delay="200">
+          <div class="photo-frame gallery-frame">
+            <img src="images/tractor.jpeg" alt="Playing music" class="photo-image">
+              <div class="gallery-caption">The dangers of the wilderness</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════
-       FOOTER — NIGHT SKY
-  ═══════════════════════════════════════ -->
+  
+
+  <!-- ── FOOTER ─────────────────────────────────────────────── -->
   <footer id="footer">
-    <div class="footer-sky" id="footerSky"></div>
-
-    <div class="footer-mtns" aria-hidden="true">
-      <svg viewBox="0 0 1440 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="0,110 0,75 100,20 210,65 330,10 460,68 580,28 720,60 840,12 960,65 1100,22 1260,72 1440,28 1440,110" fill="#2C1A10"/>
-      </svg>
-    </div>
-
-    <div class="footer-ribbon">
-      <span>✦ WILLIAM MARKETOS ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦ WILLIAM MARKETOS ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦ WILLIAM MARKETOS ✦ KEEP THE FAITH ✦ RIDE ON ✦ DUST &amp; GOLD ✦</span>
-    </div>
-
+    <canvas id="footer-canvas"></canvas>
     <div class="footer-inner">
-      <div class="footer-logo">★ WM ★</div>
-      <p class="footer-text">
-        Made with grit, heart &amp; a whole lot of good vibes.<br/>
-        © <span id="year"></span> William Marketos. All rights reserved.
-      </p>
-      <div class="footer-socials">
-        <a href="#" class="social-btn">📸 Instagram</a>
-        <a href="#" class="social-btn">🐦 Twitter</a>
-        <a href="#" class="social-btn">▶️ YouTube</a>
-        <a href="#" class="social-btn">🎵 Spotify</a>
+      <div class="footer-star">✦</div>
+      <h2 class="footer-title">William Marketos</h2>
+      <p class="footer-sub">Still walking. Still watching the sky.</p>
+      <div class="footer-ornament">
+        ✦ &nbsp; &nbsp; ★ &nbsp; &nbsp; ✦ &nbsp; &nbsp; ★ &nbsp; &nbsp; ✦
       </div>
-    </div>
-
-    <div class="footer-btop">
-      <button id="backToTop">↑ RIDE BACK TO THE TOP ↑</button>
+      <nav class="footer-nav">
+        <a href="#hero">Top</a>
+        <a href="#legend">Legend</a>
+        <a href="#music">Music</a>
+        <a href="#schooling">Schooling</a>
+        <a href="#goals">Goals</a>
+        <a href="#hobbies">Hobbies</a>
+        <a href="#gallery">Gallery</a>
+      </nav>
+      <p class="footer-credit">A life too large for any page — but we tried.</p>
     </div>
   </footer>
+
+  <!-- ── LIGHTBOX ───────────────────────────────────────────── -->
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox-close" id="lightbox-close">✕</button>
+    <div class="lightbox-inner">
+      <img id="lightbox-img" src="" alt="" />
+      <p id="lightbox-caption"></p>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
