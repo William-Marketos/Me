@@ -612,6 +612,22 @@ code {
   font-size: 1.1rem;
   color: var(--sand-pale);
   line-height: 1.7;
+  position: relative;
+  padding-bottom: 2.5rem;
+}
+.quote-attribution {
+  display: block;
+  text-align: right;
+  font-size: 0.85rem;
+  font-style: normal;
+  color: var(--sand);
+  margin-top: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.quote-attribution em {
+  font-style: italic;
+  color: var(--text-mid);
 }
 
 /* ── CHILDHOOD SECTION ──────────────────────────────────────── */
@@ -1292,6 +1308,47 @@ code {
   transition: color 0.2s;
 }
 .footer-nav a:hover { color: var(--gold); }
+
+.footer-contact {
+  margin: 2rem 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(245,166,35,0.2);
+  border-bottom: 1px solid rgba(245,166,35,0.2);
+}
+.contact-label {
+  font-family: var(--font-nav);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.contact-link,
+.social-link {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-warm);
+  text-decoration: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.contact-link:hover,
+.social-link:hover {
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(245,166,35,0.4);
+}
+.contact-social {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
 .footer-credit {
   font-family: var(--font-caption);
   font-size: 0.75rem;
